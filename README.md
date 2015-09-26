@@ -1,11 +1,11 @@
 # Deux Titres
 
-A french version of [TwoHeadlines](https://github.com/dariusk/twoheadlines) by @dariusk in PHP
+A french version of [TwoHeadlines](https://github.com/dariusk/twoheadlines) by [@dariusk](https://github.com/dariusk) in PHP
 A Twitter bot that looks at french news headlines and confuses them : [@DeuxTitres](https://twitter.com/DeuxTitres)
 
 ## Documentation
 
-See @dariusk's [nice-looking explanation of his index.js](http://tinysubversions.com/twoheadlines/docs/) in order to understand how the bot works.
+See [@dariusk](https://github.com/dariusk)'s [nice-looking explanation of his index.js](http://tinysubversions.com/twoheadlines/docs/) in order to understand how the bot works.
 The PHP code basically does the same using the PHP features instead of Javascript.
 
 ## Install
