@@ -3,7 +3,7 @@
 require_once('./TwitterAPIExchange.php');
 header('Content-Type: text/html; charset=utf-8');
 
-function getCURLOutput($url, $withScript){
+function getCURLOutput($url){
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
@@ -15,8 +15,6 @@ function getCURLOutput($url, $withScript){
   curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17');
   $output = curl_exec($ch);
   curl_close($ch);
-  if(!$withScript)
-    $output = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $output);
   return $output;
 }
 
@@ -31,7 +29,7 @@ function getDOMXPath($page){
 function getTopics ($category) {
   $baseUrl = "http://news.google.fr";
   $topics = array();
-  $categoryPage = getCURLOutput($baseUrl . '/news/section?ned=fr&topic=' . $category, true);
+  $categoryPage = getCURLOutput($baseUrl . '/news/section?ned=fr&topic=' . $category);
   $categoryXpath = getDOMXPath($categoryPage);
   $topicsName = $categoryXpath->query('//*[@class="topic"]/a/text()');
   $topicsNodes = $categoryXpath->query('//*[@class="topic"]/a');
@@ -44,7 +42,7 @@ function getTopics ($category) {
 
 function getHeadline($topic){
   $headlines = array();
-  $topicPage = getCURLOutput($topic->url, true);
+  $topicPage = getCURLOutput($topic->url);
   $topicPage = str_replace("<b>", "", $topicPage);
   $topicPage = str_replace("</b>", "", $topicPage);
   $topicXpath = getDOMXPath($topicPage);
@@ -69,27 +67,20 @@ function tweet(){
   if(count($topics) > 0){
     $firstTopic = $topics[array_rand($topics)];
     $headline = getHeadline($firstTopic);
-    echo $headline;
-    echo '<br>';
-    echo $firstTopic->name;
-    echo '<br>';
     if($headline != null && strstr($headline, $firstTopic->name) !== false){
       $secondCat = $categoryCodes[array_rand($categoryCodes)];
       $newTopics = getTopics($secondCat);
       if(count($newTopics) > 0){
         $secondTopic = $newTopics[array_rand($newTopics)];
-        echo $secondTopic->name;
-        echo '<br>';
         $newHeadline = str_replace($firstTopic->name, $secondTopic->name, $headline);
-        echo $newHeadline;
         if(strlen($newHeadline) < 141){
 
           /** Set access tokens here - see: https://apps.twitter.com/ **/
           $APIsettings = array(
-              'oauth_access_token' => "3783512423-K58EYTbI9RxQZZxPLdYnTqVRaWgMkOFa2EZC9WB",
-              'oauth_access_token_secret' => "V9kxGs4kaTjyJTomWbyOlPJraUKTHZkYIUzboe428HNK8",
-              'consumer_key' => "btCcRgpJaWzZFbung2doBIzvl",
-              'consumer_secret' => "zROhHpVoQHmsp9Os9I5t0DsD931IhhZFivV9wtiBwgvjUshqbs"
+              'oauth_access_token' => "YOUR_ACCESS_TOKEN",
+              'oauth_access_token_secret' => "YOUR_ACCESS_TOKEN_SECRET",
+              'consumer_key' => "YOUR_CONSUMER_KEY",
+              'consumer_secret' => "YOUR_CONSUMER_KEY_SECRET"
           );
 
           // Post the tweet
