@@ -1,7 +1,16 @@
 <?php
 
-require_once('./TwitterAPIExchange.php');
+include('twitterCredentials.php');
+require_once('TwitterAPIExchange.php');
 header('Content-Type: text/html; charset=utf-8');
+
+/** Set access tokens here - see: https://apps.twitter.com/ **/
+$APIsettings = array(
+    'oauth_access_token' => $oauthToken,
+    'oauth_access_token_secret' => $oauthTokenSecret,
+    'consumer_key' => $consumerKey,
+    'consumer_secret' => $consumerSecret
+);
 
 function getCURLOutput($url){
   $ch = curl_init();
@@ -58,6 +67,7 @@ function getHeadline($topic){
 }
 
 function tweet(){
+  global $APIsettings;
   $categoryCodes = array('w', 'n', 'b', 'tc', 'e', 's');
   $firstIdx = array_rand($categoryCodes);
   $firstCat = $categoryCodes[$firstIdx];
@@ -74,14 +84,6 @@ function tweet(){
         $secondTopic = $newTopics[array_rand($newTopics)];
         $newHeadline = str_replace($firstTopic->name, $secondTopic->name, $headline);
         if(strlen($newHeadline) < 141){
-
-          /** Set access tokens here - see: https://apps.twitter.com/ **/
-          $APIsettings = array(
-              'oauth_access_token' => "YOUR_ACCESS_TOKEN",
-              'oauth_access_token_secret' => "YOUR_ACCESS_TOKEN_SECRET",
-              'consumer_key' => "YOUR_CONSUMER_KEY",
-              'consumer_secret' => "YOUR_CONSUMER_KEY_SECRET"
-          );
 
           // Post the tweet
           $postfields = array(
