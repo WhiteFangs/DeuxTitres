@@ -38,10 +38,10 @@ function getDOMXPath($page){
 function getTopics ($category) {
   $baseUrl = "http://news.google.fr";
   $topics = array();
-  $categoryPage = getCURLOutput($baseUrl . '/news/section?ned=fr&topic=' . $category);
+  $categoryPage = getCURLOutput($baseUrl . '/news/headlines/section/topic/' . $category . '.fr_fr/?ned=fr&hl=fr');
   $categoryXpath = getDOMXPath($categoryPage);
-  $topicsName = $categoryXpath->query('//*[@class="topic"]/a/text()');
-  $topicsNodes = $categoryXpath->query('//*[@class="topic"]/a');
+  $topicsName = $categoryXpath->query('//*[@class="iuPoYd"]/c-wiz/a/*[@class="Q3vG6d kzAuJ"]/text()');
+  $topicsNodes = $categoryXpath->query('//*[@class="iuPoYd"]/c-wiz/a[@class="J3nBBd ME7ew"]');
   foreach($topicsNodes as $key => $node) {
     $topic = (object) array('name' => $topicsName->item($key)->nodeValue, 'url' => $baseUrl . $node->getAttribute("href"));
     $topics[] = $topic;
@@ -55,20 +55,21 @@ function getHeadline($topic){
   $topicPage = str_replace("<b>", "", $topicPage);
   $topicPage = str_replace("</b>", "", $topicPage);
   $topicXpath = getDOMXPath($topicPage);
-  $headlinesNodes = $topicXpath->query('//*[@class="titletext"]/text()');
+  $headlinesNodes = $topicXpath->query('//a[@class="nuEeue hzdq5d ME7ew"]/text()');
   for($i = 0; $i < $headlinesNodes->length; $i++){
     $titletext = $headlinesNodes->item($i)->nodeValue;
     if(strstr($titletext, " ...") === false && strstr($titletext, $topic->name) !== false){
       $headlines[] = $titletext;
     }
   }
-  $headline = $headlines[array_rand($headlines)];
+  $index = array_rand($headlines);
+  $headline = $headlines[$index];
   return $headline;
 }
 
 function tweet(){
   global $APIsettings;
-  $categoryCodes = array('w', 'n', 'b', 'tc', 'e', 's');
+  $categoryCodes = array('WORLD', 'NATION', 'BUSINESS', 'SCITECH', 'HEALTH', 'ENTERTAINMENT', 'SPORTS');
   $firstIdx = array_rand($categoryCodes);
   $firstCat = $categoryCodes[$firstIdx];
   unset($categoryCodes[$firstIdx]);
